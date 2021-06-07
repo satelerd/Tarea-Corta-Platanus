@@ -1,7 +1,6 @@
 import time
 import requests
 
-
 # Funcion que llama al api de los trades y obtiene el valor maximo
 def max_val(market_id):
     url = f'https://www.buda.com/api/v2/markets/{market_id}/trades?limit=100'
@@ -26,7 +25,7 @@ def max_val(market_id):
     return valor_maximo
 
 
-# api call de los markets
+# Api call de los markets
 url_markets = 'https://www.buda.com/api/v2/markets'
 response_markets = requests.get(url_markets).json()
 
@@ -38,7 +37,8 @@ for market in response_markets["markets"]:
         "valor_maximo": max_val(market["name"])
     })
 
-# Generar la tabla de html
+
+# Tabla HTML
 tabla_HTML = """
 <table>
     <tr>
@@ -55,5 +55,7 @@ for market in data:
     </tr>
 """
 
-tabla_HTML += "</table>"
+tabla_HTML += """</table>
+"""
+
 print(tabla_HTML)
