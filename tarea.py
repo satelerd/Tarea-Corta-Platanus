@@ -4,23 +4,24 @@ import requests
 
 # Funcion que llama al api de los trades y obtiene el valor maximo
 def max_val(market_id):
-    timestamp = int(time.time()) - 60 * 60 * 24     # Unix timestamp de hace 24hrs
-    print(timestamp)
-
     url = f'https://www.buda.com/api/v2/markets/{market_id}/trades?limit=100'
     response = requests.get(url).json()
 
     # Loop para encontrar el valor maximo
     valor_maximo = 0
+    timestamp_24hrs = int(time.time()) - 60*60*24     # Unix timestamp de hace 24hrs
     for entrie in response["trades"]["entries"]:
-
         # Si ya pasaron las 24hrs terminar el loop
-        if float(entrie[0]) < timestamp:
+        if float(entrie[0]) < timestamp_24hrs:
             print(float(entrie[0]))
             break
+        
+        amount = float(entrie[1])
+        price = float(entrie[2])
+        valor = amount * price
 
-        if float(entrie[1]) > valor_maximo:
-            valor_maximo = float(entrie[1])
+        if valor > valor_maximo:
+            valor_maximo = valor
 
     return valor_maximo
 
@@ -36,19 +37,23 @@ for market in response_markets["markets"]:
         "mercado": market["id"],
         "valor_maximo": max_val(market["name"])
     })
-print(data)
-
 
 # Generar la tabla de html
+tabla_HTML = """
+<table>
+    <tr>
+        <th>Market</th>
+        <th>Transaccion de mayor valor</th>
+    </tr>
 
+"""
 
-# import HTML
-# py_table = [
-#     ["Mercado", "Transacción de mayor valor"]
-# ]
+for market in data:
+    tabla_HTML += f"""    <tr>
+        <td>{market["mercado"]}</td>
+        <td>{market["valor_maximo"]}</td>
+    </tr>
+"""
 
-# for i in range(len(data)):
-#     py_table.append([data[i]["mercado"], data[i]["valor_maximo"]])
-
-# htmlcode = HTML.table(py_table)
-# print(htmlcode)
+tabla_HTML += "</table>"
+print(tabla_HTML)
