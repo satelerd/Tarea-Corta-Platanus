@@ -1,6 +1,7 @@
 import time
 import requests
 
+
 # Funcion que llama al api de los trades y obtiene el valor maximo
 def max_val(market_id):
     url = f'https://www.buda.com/api/v2/markets/{market_id}/trades?limit=100'
