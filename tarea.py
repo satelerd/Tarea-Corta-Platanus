@@ -2,45 +2,38 @@ import time
 import requests
 
 
-# Funcion que llama al api de los trades y obtiene el valor maximo
+# Function that calls the trades api and obtains the maximum value
 def max_val(market_id):
-    url = f'https://www.buda.com/api/v2/markets/{market_id}/trades?limit=100'
+    timestamp_24hrs = (int(time.time()) - (60 * 60 * 24)) * 1000
+
+    url = f"https://www.buda.com/api/v2/markets/{market_id}/trades?timestamp={timestamp_24hrs}"
     response = requests.get(url).json()
 
-    # Loop para encontrar el valor maximo
-    valor_maximo = 0
-    timestamp_24hrs = int(time.time()) - 60*60*24     # Unix timestamp de hace 24hrs
+    # Loop to find the maximum value
+    max_value = 0
     for entrie in response["trades"]["entries"]:
-        # Si ya pasaron las 24hrs terminar el loop
-        if float(entrie[0]) < timestamp_24hrs:
-            print(float(entrie[0]))
-            break
-        
         amount = float(entrie[1])
         price = float(entrie[2])
-        valor = amount * price
+        value = amount * price
 
-        if valor > valor_maximo:
-            valor_maximo = valor
+        if value > max_value:
+            max_value = value
 
-    return valor_maximo
+    return max_value
 
 
-# Api call de los markets
-url_markets = 'https://www.buda.com/api/v2/markets'
+# Api call for the markets
+url_markets = "https://www.buda.com/api/v2/markets"
 response_markets = requests.get(url_markets).json()
 
-# Loop para obtener todos los mercados y la transaccion de mayor valor
+# Loop to get all the markets and the highest value transaction
 data = []
 for market in response_markets["markets"]:
-    data.append({
-        "mercado": market["id"],
-        "valor_maximo": max_val(market["name"])
-    })
+    data.append({"mercado": market["id"], "valor_maximo": max_val(market["name"])})
 
 
-# Tabla HTML
-tabla_HTML = """
+# Generate the HTML table
+HTML_table = """
 <table>
     <tr>
         <th>Market</th>
@@ -50,13 +43,13 @@ tabla_HTML = """
 """
 
 for market in data:
-    tabla_HTML += f"""    <tr>
+    HTML_table += f"""    <tr>
         <td>{market["mercado"]}</td>
         <td>{market["valor_maximo"]}</td>
     </tr>
 """
 
-tabla_HTML += """</table>
+HTML_table += """</table>
 """
 
-print(tabla_HTML)
+print(HTML_table)
