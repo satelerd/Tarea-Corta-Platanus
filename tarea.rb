@@ -3,15 +3,32 @@ require 'httparty'
 
 # Function that calls the trades api and obtains the maximum value
 def max_val(market_id)
+  trades = []
+  timestamp_now = Time.now.to_i * 1000
   timestamp_24hrs = (Time.now.to_i - (60 * 60 * 24)) * 1000
 
-  url = "https://www.buda.com/api/v2/markets/#{market_id}/trades?timestamp=#{timestamp_24hrs}"
+  url = "https://www.buda.com/api/v2/markets/#{market_id}/trades?timestamp=#{timestamp_now}"
   response = HTTParty.get(url)
   response = JSON.parse(response.body)
+  trades.push(response['trades']['entries'])
+
+  # Check if there are 24hrs of trades and if not, make another request
+  while response['trades']['last_timestamp'].to_i > timestamp_24hrs
+    url = "https://www.buda.com/api/v2/markets/#{market_id}/trades?timestamp=#{response['trades']['last_timestamp'].to_i}"
+    response = HTTParty.get(url)
+    response = JSON.parse(response.body)
+    trades.push(response['trades']['entries'])
+  end
+
+  puts "Trades: #{trades}"
 
   # Loop to find the maximum value
   max_value = 0
   response['trades']['entries'].each do |entrie|
+    if entrie[0].to_i < timestamp_24hrs
+      break
+    end
+
     amount = entrie[1].to_f
     price = entrie[2].to_f
     value = amount * price
