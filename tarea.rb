@@ -20,8 +20,6 @@ def max_val(market_id)
     trades.push(response['trades']['entries'])
   end
 
-  puts "Trades: #{trades}"
-
   # Loop to find the maximum value
   max_value = 0
   response['trades']['entries'].each do |entrie|
