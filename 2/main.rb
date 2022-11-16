@@ -16,6 +16,8 @@
 #   Ubicación con mayor cantidad de máquinas: [nombre]
 #   Ubicación con menor cantidad de máquinas: [nombre]
 
+# Ten en cuenta que la línea de * tiene que tener el ancho del string más grande del reporte.
+
 # -----------------------------------------------------------------------------
 
 require 'httparty'
@@ -53,21 +55,47 @@ def get_stats(locations)
     # Ubicación con menor cantidad de máquinas.
     min_machines = locations.min_by { |location| location[:num_machines] }
 
-    puts "Estadísticas:"
-    puts "*"
-    puts "Cantidad de máquinas: #{total_machines}"
-    puts "Promedio de máquinas: #{average_machines}"
-    puts "Ubicación con mayor cantidad de máquinas: #{max_machines[:name]}"
-    puts "Ubicación con menor cantidad de máquinas: #{min_machines[:name]}"
+    return {
+        total_machines: total_machines,
+        average_machines: average_machines,
+        max_machines: max_machines,
+        min_machines: min_machines
+    }
 end
+
+def print_stats(stats, lines)
+    # ten en cuenta que la línea de * tiene que tener el ancho del string más grande del reporte.
+    # para lograr esto, debes calcular el ancho de cada string y luego tomar el máximo.
+    #lines es una lista de strings
+    max_length = lines.map { |line| line.length }.max
+    puts "Estadísticas:"
+    puts "*" * max_length
+    puts "Cantidad de máquinas: #{stats[:total_machines]}"
+    puts "Promedio de máquinas: #{stats[:average_machines]}"
+    puts "Ubicación con mayor cantidad de máquinas: #{stats[:max_machines][:name]}"
+    puts "Ubicación con menor cantidad de máquinas: #{stats[:min_machines][:name]}"
+    
+    puts "Estadísticas:"
+end
+
 
 # Llamadas de funciones
 # -------------------
 base_url = 'http://pinballmap.com/api/v1'
 
-locations = get_locations(100, base_url)
-get_stats(locations)
+# lines = [
+#     1st_line = "Estadísticas:",
+#     2nd_line = "*",
+#     3rd_line = "Cantidad de máquinas: ",
+#     4th_line = "Promedio de máquinas: ",
+#     5th_line = "Ubicación con mayor cantidad de máquinas: ",
+#     6th_line = "Ubicación con menor cantidad de máquinas: "
+# ]
 
+
+locations = get_locations(2, base_url)
+stats = get_stats(locations)
+print_stats(stats, lines)
 
 
 
