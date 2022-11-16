@@ -46,11 +46,7 @@ end
 def get_stats(locations)
     # Cantidad total de máquinas.
     total_machines = locations.map { |location| location[:num_machines] }.reduce(:+)
-    # Promedio de máquinas por ubicación.
-    puts "Hay #{total_machines} máquinas"
-    puts "Hay #{locations.length} ubicaciones"
-    # get the average as a float
-    average_machines = total_machines / locations.length
+    average_machines = total_machines.to_f / locations.length
     # Ubicación con mayor cantidad de máquinas.
     max_machines = locations.max_by { |location| location[:num_machines] }
     # Ubicación con menor cantidad de máquinas.
