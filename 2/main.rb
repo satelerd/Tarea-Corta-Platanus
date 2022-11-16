@@ -21,10 +21,6 @@
 require 'httparty'
 require 'json'
 
-# Variables estaticas
-# -------------------
-base_url = 'http://pinballmap.com/api/v1'
-
 # Funciones
 # -------------------
 def get_locations(n, base_url) # Obtener las primeras n regiones
@@ -45,6 +41,36 @@ def get_locations(n, base_url) # Obtener las primeras n regiones
 end
 
 
+def get_stats(locations)
+    # Cantidad total de máquinas.
+    total_machines = locations.map { |location| location[:num_machines] }.reduce(:+)
+    # Promedio de máquinas por ubicación.
+    puts "Hay #{total_machines} máquinas"
+    puts "Hay #{locations.length} ubicaciones"
+    average_machines = total_machines / locations.length
+    # Ubicación con mayor cantidad de máquinas.
+    max_machines = locations.max_by { |location| location[:num_machines] }
+    # Ubicación con menor cantidad de máquinas.
+    min_machines = locations.min_by { |location| location[:num_machines] }
+
+    puts "Estadísticas:"
+    puts "*"
+    puts "Cantidad de máquinas: #{total_machines}"
+    puts "Promedio de máquinas: #{average_machines}"
+    puts "Ubicación con mayor cantidad de máquinas: #{max_machines[:name]}"
+    puts "Ubicación con menor cantidad de máquinas: #{min_machines[:name]}"
+end
+
 # Llamadas de funciones
 # -------------------
-locations = get_locations(10, base_url)
+base_url = 'http://pinballmap.com/api/v1'
+
+locations = get_locations(100, base_url)
+get_stats(locations)
+
+
+
+
+# Dudas
+# -------------------
+# Si hay varias ubicaciones con el mismo mayor o menor número de máquinas, las muestro todas?
