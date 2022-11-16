@@ -26,7 +26,19 @@ require 'json'
 
 # Funciones
 # -------------------
-def get_locations(n, base_url) # Obtener las primeras n regiones
+def get_locations(base_url) # Obtener las primeras n regiones
+    begin
+        print "¿En cuántas regiones quieres buscar? "
+        n = Integer(gets.chomp)
+        puts ""
+        puts "Buscando en las primeras #{n} regiones..."
+        puts ""
+    rescue
+        puts ""
+        puts "Porfavor ingresa un número"
+        retry
+    end
+
     response = HTTParty.get(base_url + '/regions')
     regions = JSON.parse(response.body)['regions'][0..n-1]
     regions = regions.map { |region| { name: region['name'], id: region['id'] } }
@@ -64,7 +76,7 @@ end
 base_url = 'http://pinballmap.com/api/v1'
 
 
-locations = get_locations(2, base_url)
+locations = get_locations(base_url)
 stats = get_stats(locations)
 puts stats
 
