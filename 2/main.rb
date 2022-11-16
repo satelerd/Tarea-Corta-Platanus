@@ -30,12 +30,9 @@ def get_locations(base_url) # Obtener las primeras n regiones
     begin
         print "¿En cuántas regiones quieres buscar? "
         n = Integer(gets.chomp)
-        puts ""
-        puts "Buscando en las primeras #{n} regiones..."
-        puts ""
+        puts "\nBuscando en las primeras #{n} regiones...\n\n"
     rescue
-        puts ""
-        puts "Porfavor ingresa un número"
+        puts "\nPor favor ingresa un número"
         retry
     end
 
