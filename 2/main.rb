@@ -49,34 +49,44 @@ def get_stats(locations)
     # Promedio de máquinas por ubicación.
     puts "Hay #{total_machines} máquinas"
     puts "Hay #{locations.length} ubicaciones"
+    # get the average as a float
     average_machines = total_machines / locations.length
     # Ubicación con mayor cantidad de máquinas.
     max_machines = locations.max_by { |location| location[:num_machines] }
     # Ubicación con menor cantidad de máquinas.
     min_machines = locations.min_by { |location| location[:num_machines] }
 
-    return {
-        total_machines: total_machines,
-        average_machines: average_machines,
-        max_machines: max_machines,
-        min_machines: min_machines
-    }
+    # crea una lista con cada linea del texto
+    lines = [
+        "Estadísticas:",
+        "*",
+        "Cantidad de máquinas: #{total_machines}",
+        "Promedio de máquinas: #{average_machines}",
+        "Ubicación con mayor cantidad de máquinas: #{max_machines[:name]}",
+        "Ubicación con menor cantidad de máquinas: #{min_machines[:name]}"
+    ]
+    # obtiene el ancho de la linea mas larga
+    width = lines.max_by(&:length).length
+    # cambia el valor de lines[1] por una linea de asteriscos con el ancho de la linea mas larga
+    lines[1] = "*" * width
+    # imprime cada linea
+    puts lines
 end
 
-def print_stats(stats, lines)
-    # ten en cuenta que la línea de * tiene que tener el ancho del string más grande del reporte.
-    # para lograr esto, debes calcular el ancho de cada string y luego tomar el máximo.
-    #lines es una lista de strings
-    max_length = lines.map { |line| line.length }.max
-    puts "Estadísticas:"
-    puts "*" * max_length
-    puts "Cantidad de máquinas: #{stats[:total_machines]}"
-    puts "Promedio de máquinas: #{stats[:average_machines]}"
-    puts "Ubicación con mayor cantidad de máquinas: #{stats[:max_machines][:name]}"
-    puts "Ubicación con menor cantidad de máquinas: #{stats[:min_machines][:name]}"
+# def print_stats(stats, lines)
+#     # ten en cuenta que la línea de * tiene que tener el ancho del string más grande del reporte.
+#     # para lograr esto, debes calcular el ancho de cada string y luego tomar el máximo.
+#     #lines es una lista de strings
+#     max_length = lines.map { |line| line.length }.max
+#     puts "Estadísticas:"
+#     puts "*" * max_length
+#     puts "Cantidad de máquinas: #{stats[:total_machines]}"
+#     puts "Promedio de máquinas: #{stats[:average_machines]}"
+#     puts "Ubicación con mayor cantidad de máquinas: #{stats[:max_machines][:name]}"
+#     puts "Ubicación con menor cantidad de máquinas: #{stats[:min_machines][:name]}"
     
-    puts "Estadísticas:"
-end
+#     puts "Estadísticas:"
+# end
 
 
 # Llamadas de funciones
@@ -95,10 +105,11 @@ base_url = 'http://pinballmap.com/api/v1'
 
 locations = get_locations(2, base_url)
 stats = get_stats(locations)
-print_stats(stats, lines)
+# print_stats(stats, lines)
 
 
 
 # Dudas
 # -------------------
 # Si hay varias ubicaciones con el mismo mayor o menor número de máquinas, las muestro todas?
+# poner el resultado del promedio como float
